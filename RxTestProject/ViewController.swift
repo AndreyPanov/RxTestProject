@@ -5,7 +5,7 @@ class ViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    test()
+    challengeSecond()
   }
   
   func test() {
@@ -64,6 +64,47 @@ class ViewController: UIViewController {
         onCompleted: {print("Completed")},
         onDisposed: {print("Disposed")})
       .disposed(by: disposeBag1)
+  }
+  
+  func factory() {
+    let disposeBag = DisposeBag()
+    var flip = false
+    let factory: Observable<Int> = Observable.deferred {
+      flip = !flip
+      if flip {
+        return Observable.of(1, 2, 3)
+      } else {
+        return Observable.of(4, 5, 6)
+      }
+    }
+    
+    for _ in 0...3 {
+      factory.subscribe(onNext: {
+        print($0)
+      }).disposed(by: disposeBag)
+    }
+  }
+  
+  func challengeFirst() {
+    let disposeBag = DisposeBag()
+    let neverObserver = Observable<Any>.never()
+    neverObserver
+      .do(onNext: { element in print("I can print it! \(element)")},
+          onError: {_ in}, onCompleted: {print("done")}, onSubscribe: {print("subscribed")}, onSubscribed: {}, onDispose: {print("disposed")})
+      .subscribe(onNext: {element in print(element)}, onCompleted: {print("done")})
+      .disposed(by: disposeBag)
+    
+  }
+  
+  func challengeSecond() {
+    let disposeBag = DisposeBag()
+    let string = ""
+    let neverObserver = Observable<Any>.never()
+    neverObserver
+      .debug(string, trimOutput: false)
+      .subscribe(onNext: {element in print(element)}, onCompleted: {print("done")})
+      .disposed(by: disposeBag)
+    print(string)
   }
 }
 
