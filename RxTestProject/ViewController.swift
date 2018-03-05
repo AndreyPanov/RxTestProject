@@ -5,7 +5,7 @@ class ViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    challengeSecond()
+    subjects()
   }
   
   func test() {
@@ -14,19 +14,24 @@ class ViewController: UIViewController {
     let observable3 = Observable.of([3, 4, 2])
     let observable4 = Observable.from([3, 5, 6])
     
-    observable4.subscribe { event in
-      print(event)
+    observable.subscribe { event in
+      //print(event.element)
     }
+    
     
     observable2.subscribe { event in
       if let element = event.element {
-        print(element)
+        //print(element)
       }
     }
     
     observable3.subscribe(onNext: {element in
-      print(element)
+      //print(element)
     })
+    
+    observable4.subscribe { event in
+      //print(event)
+    }
     
     let emptyObserver = Observable<Void>.empty()
     emptyObserver.subscribe(onNext: {element in print(element)}, onCompleted: {print("done")})
@@ -35,7 +40,7 @@ class ViewController: UIViewController {
     anyObserver.subscribe(onNext: {element in print(element)}, onCompleted: {print("done")})
     
     let observableCancel = Observable.of("A", "B", "C")
-    let subscription = observable.subscribe { event in
+    let subscription = observableCancel.subscribe { event in
       print(event)
     }
     subscription.dispose()
@@ -105,6 +110,23 @@ class ViewController: UIViewController {
       .subscribe(onNext: {element in print(element)}, onCompleted: {print("done")})
       .disposed(by: disposeBag)
     print(string)
+  }
+  
+  func subjects() {
+    let subject = PublishSubject<String>()
+    
+    let listner = subject.subscribe({ string in
+      print(string)
+    })
+    subject.on(.next("1"))
+    listner.dispose()
+    subject.onNext("Listen?")
+    
+    let subscriptionTwo = subject
+      .subscribe { event in
+        print("2)", event.element ?? event)
+    }
+    subject.on(.next("33"))
   }
 }
 
