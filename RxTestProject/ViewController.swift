@@ -126,7 +126,16 @@ class ViewController: UIViewController {
       .subscribe { event in
         print("2)", event.element ?? event)
     }
+    
     subject.on(.next("33"))
+    subject.onCompleted()
+    subject.onNext("5")
+    subscriptionTwo.dispose()
+    let dispose = DisposeBag()
+    subject.subscribe {
+      print("3)", $0.element ?? $0)
+    }.disposed(by: dispose)
+    subject.onNext("?")
   }
 }
 
